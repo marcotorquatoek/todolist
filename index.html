@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To Do</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.15);
+    --text: #e8e0d0;
+    --muted: #555;
+    --done: #3a3a3a;
+    --done-text: #444;
+    --danger: #8b3a3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .clear-btn {
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    padding: 6px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .clear-btn:hover {
+    background: var(--danger);
+    color: var(--text);
+  }
+
+  .section {
+    margin-bottom: 36px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    padding-left: 2px;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    transition: all 0.18s;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .item:hover {
+    border-color: var(--border);
+    background: var(--surface);
+  }
+
+  .item.checked {
+    opacity: 0.45;
+  }
+
+  .item.checked .item-label {
+    text-decoration: line-through;
+    color: var(--done-text);
+  }
+
+  .checkbox {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .item.checked .checkbox {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .checkmark {
+    display: none;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+  }
+
+  .item.checked .checkmark {
+    display: block;
+  }
+
+  .item-label {
+    flex: 1;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    transition: color 0.15s;
+  }
+
+  .item-time {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+    min-width: 42px;
+    text-align: right;
+    letter-spacing: 0.03em;
+  }
+
+  .item.checked .item-time {
+    color: var(--accent);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .special-item {
+    padding: 10px 14px;
+    border: 1px dashed var(--accent);
+    background: var(--accent-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .special-item:hover {
+    background: rgba(200,169,110,0.25);
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  footer {
+    margin-top: 48px;
+    text-align: center;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section { animation: fadeIn 0.3s ease both; }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>To Do</h1>
+    <button class="clear-btn" onclick="clearAll()">Svuota tutto</button>
+  </header>
+
+  <!-- PRINCIPALI -->
+  <div class="section">
+    <div class="section-title">Principali</div>
+
+    <div class="item" id="item-portafoglio" onclick="toggle('portafoglio')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label"><u>PORTAFOGLIO + CC</u>: 02/04</span>
+      <span class="item-time" id="time-portafoglio"></span>
+    </div>
+
+    <div class="item" id="item-googlefoto" onclick="toggle('googlefoto')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Google Foto <u>DATA</u>: 31/03</span>
+      <span class="item-time" id="time-googlefoto"></span>
+    </div>
+
+    <div class="item" id="item-galeria" onclick="toggle('galeria')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Pulire Galleria</span>
+      <span class="item-time" id="time-galeria"></span>
+    </div>
+
+    <div class="item" id="item-email" onclick="toggle('email')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">E-Mail</span>
+      <span class="item-time" id="time-email"></span>
+    </div>
+
+    <div class="item" id="item-spotify" onclick="toggle('spotify')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Playlist Spotify</span>
+      <span class="item-time" id="time-spotify"></span>
+    </div>
+
+    <div class="item" id="item-suno" onclick="toggle('suno')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Playlist SUNO</span>
+      <span class="item-time" id="time-suno"></span>
+    </div>
+
+    <div class="item" id="item-shazam" onclick="toggle('shazam')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Check <u>Shazam</u></span>
+      <span class="item-time" id="time-shazam"></span>
+    </div>
+
+    <div class="item" id="item-note" onclick="toggle('note')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Note</span>
+      <span class="item-time" id="time-note"></span>
+    </div>
+  </div>
+
+  <!-- PULIZIA -->
+  <div class="section">
+    <div class="section-title">Pulizia</div>
+
+    <div class="special-item" onclick="toggle('pulizia-avanzata')">
+      <div class="dot"></div>
+      <span>(clicca per pulizia avanzata)</span>
+      <span class="item-time" id="time-pulizia-avanzata" style="margin-left:auto;"></span>
+    </div>
+
+    <div class="item" id="item-icloud" onclick="toggle('icloud')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Pulizia File + <u>iCloud</u></span>
+      <span class="item-time" id="time-icloud"></span>
+    </div>
+  </div>
+
+  <!-- DA RIORDINARE -->
+  <div class="section">
+    <div class="section-title">Da Riordinare</div>
+
+    <div class="item" id="item-gdrive" onclick="toggle('gdrive')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Google Drive</span>
+      <span class="item-time" id="time-gdrive"></span>
+    </div>
+
+    <div class="item" id="item-goplayer" onclick="toggle('goplayer')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Musica su <u>GoPlayer</u></span>
+      <span class="item-time" id="time-goplayer"></span>
+    </div>
+
+    <div class="item" id="item-telegram" onclick="toggle('telegram')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Ordine Telegram (Chat e Archivi)</span>
+      <span class="item-time" id="time-telegram"></span>
+    </div>
+
+    <div class="item" id="item-canva" onclick="toggle('canva')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label"><u>Canva</u></span>
+      <span class="item-time" id="time-canva"></span>
+    </div>
+
+    <div class="item" id="item-capcut" onclick="toggle('capcut')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label"><u>CapCut</u></span>
+      <span class="item-time" id="time-capcut"></span>
+    </div>
+
+    <div class="item" id="item-pc" onclick="toggle('pc')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">PC</span>
+      <span class="item-time" id="time-pc"></span>
+    </div>
+
+    <div class="item" id="item-messaggi" onclick="toggle('messaggi')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Messaggi</span>
+      <span class="item-time" id="time-messaggi"></span>
+    </div>
+
+    <div class="item" id="item-altre" onclick="toggle('altre')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label"><strong>Altre</strong></span>
+      <span class="item-time" id="time-altre"></span>
+    </div>
+  </div>
+
+  <footer>stato salvato in locale</footer>
+</div>
+
+<script>
+  const STATE_KEY = 'todo_state_v1';
+
+  function getState() {
+    try { return JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch { return {}; }
+  }
+
+  function saveState(s) {
+    localStorage.setItem(STATE_KEY, JSON.stringify(s));
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+  }
+
+  function toggle(id) {
+    const state = getState();
+    const el = document.getElementById('item-' + id) || document.querySelector('.special-item[data-id="' + id + '"]');
+    const timeEl = document.getElementById('time-' + id);
+
+    if (state[id]) {
+      delete state[id];
+      if (el) el.classList.remove('checked');
+      if (timeEl) timeEl.textContent = '';
+    } else {
+      const now = Date.now();
+      state[id] = now;
+      if (el) el.classList.add('checked');
+      if (timeEl) timeEl.textContent = formatTime(now);
+    }
+    saveState(state);
+  }
+
+  // special item needs data-id
+  document.querySelector('.special-item').setAttribute('data-id', 'pulizia-avanzata');
+  document.querySelector('.special-item').onclick = function() { toggle('pulizia-avanzata'); };
+
+  function clearAll() {
+    if (!confirm('Svuotare tutti i check?')) return;
+    localStorage.removeItem(STATE_KEY);
+    document.querySelectorAll('.item').forEach(el => el.classList.remove('checked'));
+    document.querySelectorAll('.item-time').forEach(el => el.textContent = '');
+    document.querySelector('.special-item').classList.remove('checked');
+  }
+
+  function restoreState() {
+    const state = getState();
+    for (const [id, ts] of Object.entries(state)) {
+      const el = document.getElementById('item-' + id);
+      const timeEl = document.getElementById('time-' + id);
+      if (el) el.classList.add('checked');
+      if (timeEl) timeEl.textContent = formatTime(ts);
+    }
+  }
+
+  restoreState();
+</script>
+</body>
+</html>
