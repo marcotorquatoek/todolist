@@ -1,270 +1,289 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>To Do</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@600;700&display=swap');
 
-  :root {
-    --bg: #0e0e0e;
-    --surface: #161616;
-    --border: #2a2a2a;
-    --accent: #c8a96e;
-    --accent-dim: rgba(200,169,110,0.15);
-    --text: #e8e0d0;
-    --muted: #555;
-    --done: #3a3a3a;
-    --done-text: #444;
-    --danger: #8b3a3a;
-  }
+[data-theme="dark"] {
+  --bg: #0e0e0e;
+  --surface: #161616;
+  --border: #252525;
+  --accent: #c8a96e;
+  --accent-dim: rgba(200,169,110,0.12);
+  --text: #ddd6c8;
+  --muted: #4a4a4a;
+  --done-text: #3e3e3e;
+  --danger: #7a3030;
+  --overlay: rgba(0,0,0,0.88);
+  --modal-bg: #121212;
+  --tag-red: #c0392b;
+}
+[data-theme="light"] {
+  --bg: #f5f3ef;
+  --surface: #edeae4;
+  --border: #d4cfc6;
+  --accent: #9a7640;
+  --accent-dim: rgba(154,118,64,0.1);
+  --text: #2a2520;
+  --muted: #9a9288;
+  --done-text: #b0a898;
+  --danger: #9b3a3a;
+  --overlay: rgba(0,0,0,0.5);
+  --modal-bg: #f0ede7;
+  --tag-red: #c0392b;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    padding: 40px 20px 80px;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  min-height: 100vh;
+  padding: 32px 20px 80px;
+  transition: background 0.2s, color 0.2s;
+}
 
-  .container {
-    max-width: 680px;
-    margin: 0 auto;
-  }
+.container { max-width: 640px; margin: 0 auto; }
 
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 48px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 20px;
-  }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.header-left { display: flex; align-items: baseline; gap: 10px; }
+header h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.version {
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
 
-  header h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1.6rem;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    text-transform: uppercase;
-  }
+.btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn-danger { border-color: var(--danger); color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: var(--text); border-color: var(--danger); }
 
-  .clear-btn {
-    background: none;
-    border: 1px solid var(--danger);
-    color: var(--danger);
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    padding: 6px 14px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
+.section { margin-bottom: 32px; animation: fadeIn 0.25s ease both; }
+.section:nth-child(2) { animation-delay: 0.04s; }
+.section:nth-child(3) { animation-delay: 0.08s; }
+.section:nth-child(4) { animation-delay: 0.12s; }
 
-  .clear-btn:hover {
-    background: var(--danger);
-    color: var(--text);
-  }
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
 
-  .section {
-    margin-bottom: 36px;
-  }
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.12s, border-color 0.12s, opacity 0.15s;
+}
+.item:hover { background: var(--surface); border-color: var(--border); }
+.item.checked { opacity: 0.35; }
+.item.checked .item-label { text-decoration: line-through; color: var(--done-text); }
 
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-    padding-left: 2px;
-  }
+.checkbox {
+  width: 14px; height: 14px;
+  border: 1px solid var(--muted);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.item.checked .checkbox { border-color: var(--accent); background: var(--accent-dim); }
+.checkmark { display: none; width: 7px; height: 7px; background: var(--accent); }
+.item.checked .checkmark { display: block; }
 
-  .item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 10px 14px;
-    border: 1px solid transparent;
-    transition: all 0.18s;
-    cursor: pointer;
-    user-select: none;
-  }
+.item-label { flex: 1; line-height: 1.4; }
+.item-time {
+  font-size: 0.58rem;
+  color: var(--muted);
+  white-space: nowrap;
+  text-align: right;
+  min-width: 76px;
+}
+.item.checked .item-time { color: var(--accent); }
 
-  .item:hover {
-    border-color: var(--border);
-    background: var(--surface);
-  }
+.link-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--accent);
+  background: var(--accent-dim);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.76rem;
+  color: var(--accent);
+  margin-bottom: 4px;
+  user-select: none;
+}
+.link-item:hover { background: rgba(200,169,110,0.2); }
+.link-item .arrow { margin-left: auto; font-size: 0.7rem; opacity: 0.6; }
 
-  .item.checked {
-    opacity: 0.45;
-  }
+/* MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: var(--overlay);
+  z-index: 100;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px 40px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
 
-  .item.checked .item-label {
-    text-decoration: line-through;
-    color: var(--done-text);
-  }
+.modal {
+  background: var(--modal-bg);
+  border: 1px solid var(--border);
+  width: 100%; max-width: 580px;
+  padding: 24px 22px;
+  animation: slideUp 0.18s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  .checkbox {
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--muted);
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-  }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.modal-close {
+  background: none; border: none;
+  color: var(--muted); font-size: 1rem;
+  cursor: pointer; padding: 2px 6px;
+  transition: color 0.1s;
+}
+.modal-close:hover { color: var(--text); }
 
-  .item.checked .checkbox {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-  }
+.modal-group-label {
+  font-size: 0.57rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
 
-  .checkmark {
-    display: none;
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-  }
+.tag-red { color: var(--tag-red); }
 
-  .item.checked .checkmark {
-    display: block;
-  }
+footer {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
 
-  .item-label {
-    flex: 1;
-    font-size: 0.82rem;
-    line-height: 1.4;
-    transition: color 0.15s;
-  }
-
-  .item-time {
-    font-size: 0.65rem;
-    color: var(--muted);
-    font-family: 'DM Mono', monospace;
-    white-space: nowrap;
-    min-width: 42px;
-    text-align: right;
-    letter-spacing: 0.03em;
-  }
-
-  .item.checked .item-time {
-    color: var(--accent);
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 24px 0;
-  }
-
-  .special-item {
-    padding: 10px 14px;
-    border: 1px dashed var(--accent);
-    background: var(--accent-dim);
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.82rem;
-    color: var(--accent);
-    margin-bottom: 2px;
-  }
-
-  .special-item:hover {
-    background: rgba(200,169,110,0.25);
-  }
-
-  .dot {
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  footer {
-    margin-top: 48px;
-    text-align: center;
-    font-size: 0.6rem;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section { animation: fadeIn 0.3s ease both; }
-  .section:nth-child(2) { animation-delay: 0.05s; }
-  .section:nth-child(3) { animation-delay: 0.1s; }
-  .section:nth-child(4) { animation-delay: 0.15s; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
 <div class="container">
 
   <header>
-    <h1>To Do</h1>
-    <button class="clear-btn" onclick="clearAll()">Svuota tutto</button>
+    <div class="header-left">
+      <h1>To Do</h1>
+      <span class="version">v2</span>
+    </div>
+    <div class="header-right">
+      <button class="btn" id="theme-btn" onclick="toggleTheme()">☀ chiaro</button>
+      <button class="btn btn-danger" onclick="clearAll()">svuota</button>
+    </div>
   </header>
 
   <!-- PRINCIPALI -->
   <div class="section">
     <div class="section-title">Principali</div>
-
     <div class="item" id="item-portafoglio" onclick="toggle('portafoglio')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label"><u>PORTAFOGLIO + CC</u>: 02/04</span>
+      <span class="item-label">PORTAFOGLIO + CC — 02/04</span>
       <span class="item-time" id="time-portafoglio"></span>
     </div>
-
     <div class="item" id="item-googlefoto" onclick="toggle('googlefoto')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label">Google Foto <u>DATA</u>: 31/03</span>
+      <span class="item-label">Google Foto — 31/03</span>
       <span class="item-time" id="time-googlefoto"></span>
     </div>
-
     <div class="item" id="item-galeria" onclick="toggle('galeria')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Pulire Galleria</span>
       <span class="item-time" id="time-galeria"></span>
     </div>
-
     <div class="item" id="item-email" onclick="toggle('email')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">E-Mail</span>
       <span class="item-time" id="time-email"></span>
     </div>
-
     <div class="item" id="item-spotify" onclick="toggle('spotify')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Playlist Spotify</span>
       <span class="item-time" id="time-spotify"></span>
     </div>
-
     <div class="item" id="item-suno" onclick="toggle('suno')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Playlist SUNO</span>
       <span class="item-time" id="time-suno"></span>
     </div>
-
     <div class="item" id="item-shazam" onclick="toggle('shazam')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label">Check <u>Shazam</u></span>
+      <span class="item-label">Check Shazam</span>
       <span class="item-time" id="time-shazam"></span>
     </div>
-
     <div class="item" id="item-note" onclick="toggle('note')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Note</span>
@@ -275,16 +294,13 @@
   <!-- PULIZIA -->
   <div class="section">
     <div class="section-title">Pulizia</div>
-
-    <div class="special-item" onclick="toggle('pulizia-avanzata')">
-      <div class="dot"></div>
-      <span>(clicca per pulizia avanzata)</span>
-      <span class="item-time" id="time-pulizia-avanzata" style="margin-left:auto;"></span>
+    <div class="link-item" onclick="openModal('modal-pulizia')">
+      <span>pulizia avanzata</span>
+      <span class="arrow">→</span>
     </div>
-
     <div class="item" id="item-icloud" onclick="toggle('icloud')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label">Pulizia File + <u>iCloud</u></span>
+      <span class="item-label">Pulizia File + iCloud</span>
       <span class="item-time" id="time-icloud"></span>
     </div>
   </div>
@@ -292,117 +308,203 @@
   <!-- DA RIORDINARE -->
   <div class="section">
     <div class="section-title">Da Riordinare</div>
-
     <div class="item" id="item-gdrive" onclick="toggle('gdrive')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Google Drive</span>
       <span class="item-time" id="time-gdrive"></span>
     </div>
-
     <div class="item" id="item-goplayer" onclick="toggle('goplayer')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label">Musica su <u>GoPlayer</u></span>
+      <span class="item-label">Musica su GoPlayer</span>
       <span class="item-time" id="time-goplayer"></span>
     </div>
-
     <div class="item" id="item-telegram" onclick="toggle('telegram')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Ordine Telegram (Chat e Archivi)</span>
       <span class="item-time" id="time-telegram"></span>
     </div>
-
     <div class="item" id="item-canva" onclick="toggle('canva')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label"><u>Canva</u></span>
+      <span class="item-label">Canva</span>
       <span class="item-time" id="time-canva"></span>
     </div>
-
     <div class="item" id="item-capcut" onclick="toggle('capcut')">
       <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label"><u>CapCut</u></span>
+      <span class="item-label">CapCut</span>
       <span class="item-time" id="time-capcut"></span>
     </div>
-
     <div class="item" id="item-pc" onclick="toggle('pc')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">PC</span>
       <span class="item-time" id="time-pc"></span>
     </div>
-
     <div class="item" id="item-messaggi" onclick="toggle('messaggi')">
       <div class="checkbox"><div class="checkmark"></div></div>
       <span class="item-label">Messaggi</span>
       <span class="item-time" id="time-messaggi"></span>
     </div>
-
-    <div class="item" id="item-altre" onclick="toggle('altre')">
-      <div class="checkbox"><div class="checkmark"></div></div>
-      <span class="item-label"><strong>Altre</strong></span>
-      <span class="item-time" id="time-altre"></span>
+    <div class="link-item" onclick="openModal('modal-altre')">
+      <span>Altre</span>
+      <span class="arrow">→</span>
     </div>
   </div>
 
   <footer>stato salvato in locale</footer>
 </div>
 
+<!-- MODAL PULIZIA AVANZATA -->
+<div class="modal-overlay" id="modal-pulizia" onclick="overlayClose(event,'modal-pulizia')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Pulizia Avanzata</span>
+      <button class="modal-close" onclick="closeModal('modal-pulizia')">✕</button>
+    </div>
+
+    <div class="modal-group-label">Andando in Generali</div>
+    <div class="item" id="item-spazio-iphone" onclick="toggle('spazio-iphone')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Pulizia "Spazio iPhone" — dimensioni occupate da ogni app</span>
+      <span class="item-time" id="time-spazio-iphone"></span>
+    </div>
+
+    <div class="modal-group-label">Andando in Marco Torquato → iCloud</div>
+    <div class="item" id="item-spazio-icloud" onclick="toggle('spazio-icloud')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Pulizia <span class="tag-red">"Spazio"</span> — dimensioni cloud da ogni app</span>
+      <span class="item-time" id="time-spazio-icloud"></span>
+    </div>
+    <div class="item" style="padding-left:28px" id="item-backup-icloud" onclick="toggle('backup-icloud')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Pulizia "Backup iCloud" — contenuto del backup giornaliero. Si riflette nello <span class="tag-red">Spazio</span> sopra</span>
+      <span class="item-time" id="time-backup-icloud"></span>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ALTRE -->
+<div class="modal-overlay" id="modal-altre" onclick="overlayClose(event,'modal-altre')">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Altre</span>
+      <button class="modal-close" onclick="closeModal('modal-altre')">✕</button>
+    </div>
+    <div class="item" id="item-ig" onclick="toggle('ig')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">IG</span>
+      <span class="item-time" id="time-ig"></span>
+    </div>
+    <div class="item" id="item-ig2" onclick="toggle('ig2')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">IG2</span>
+      <span class="item-time" id="time-ig2"></span>
+    </div>
+    <div class="item" id="item-tiktok" onclick="toggle('tiktok')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">TikTok</span>
+      <span class="item-time" id="time-tiktok"></span>
+    </div>
+    <div class="item" id="item-facebook" onclick="toggle('facebook')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Facebook</span>
+      <span class="item-time" id="time-facebook"></span>
+    </div>
+    <div class="item" id="item-galleria2" onclick="toggle('galleria2')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">Galleria</span>
+      <span class="item-time" id="time-galleria2"></span>
+    </div>
+    <div class="item" id="item-igmex" onclick="toggle('igmex')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">IG-Mex</span>
+      <span class="item-time" id="time-igmex"></span>
+    </div>
+    <div class="item" id="item-tgclose" onclick="toggle('tgclose')">
+      <div class="checkbox"><div class="checkmark"></div></div>
+      <span class="item-label">TG-Close</span>
+      <span class="item-time" id="time-tgclose"></span>
+    </div>
+  </div>
+</div>
+
 <script>
-  const STATE_KEY = 'todo_state_v1';
+const STATE_KEY = 'todo_state_v2';
+const THEME_KEY = 'todo_theme';
 
-  function getState() {
-    try { return JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch { return {}; }
+function getState() {
+  try { return JSON.parse(localStorage.getItem(STATE_KEY)) || {}; } catch { return {}; }
+}
+function saveState(s) { localStorage.setItem(STATE_KEY, JSON.stringify(s)); }
+
+function formatDateTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const dd = d.getDate().toString().padStart(2,'0');
+  const mo = (d.getMonth()+1).toString().padStart(2,'0');
+  const hh = d.getHours().toString().padStart(2,'0');
+  const mm = d.getMinutes().toString().padStart(2,'0');
+  return `${dd}/${mo} ${hh}:${mm}`;
+}
+
+function toggle(id) {
+  const state  = getState();
+  const el     = document.getElementById('item-' + id);
+  const timeEl = document.getElementById('time-' + id);
+  if (state[id]) {
+    delete state[id];
+    if (el) el.classList.remove('checked');
+    if (timeEl) timeEl.textContent = '';
+  } else {
+    const now = Date.now();
+    state[id] = now;
+    if (el) el.classList.add('checked');
+    if (timeEl) timeEl.textContent = formatDateTime(now);
   }
+  saveState(state);
+}
 
-  function saveState(s) {
-    localStorage.setItem(STATE_KEY, JSON.stringify(s));
-  }
+function clearAll() {
+  if (!confirm('Svuotare tutti i check?')) return;
+  saveState({});
+  document.querySelectorAll('.item').forEach(el => el.classList.remove('checked'));
+  document.querySelectorAll('.item-time').forEach(el => el.textContent = '');
+}
 
-  function formatTime(ts) {
-    if (!ts) return '';
-    const d = new Date(ts);
-    return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
-  }
-
-  function toggle(id) {
-    const state = getState();
-    const el = document.getElementById('item-' + id) || document.querySelector('.special-item[data-id="' + id + '"]');
+function restoreState() {
+  const state = getState();
+  for (const [id, ts] of Object.entries(state)) {
+    const el     = document.getElementById('item-' + id);
     const timeEl = document.getElementById('time-' + id);
-
-    if (state[id]) {
-      delete state[id];
-      if (el) el.classList.remove('checked');
-      if (timeEl) timeEl.textContent = '';
-    } else {
-      const now = Date.now();
-      state[id] = now;
-      if (el) el.classList.add('checked');
-      if (timeEl) timeEl.textContent = formatTime(now);
-    }
-    saveState(state);
+    if (el) el.classList.add('checked');
+    if (timeEl) timeEl.textContent = formatDateTime(ts);
   }
+}
 
-  // special item needs data-id
-  document.querySelector('.special-item').setAttribute('data-id', 'pulizia-avanzata');
-  document.querySelector('.special-item').onclick = function() { toggle('pulizia-avanzata'); };
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀ chiaro' : '☾ scuro';
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
 
-  function clearAll() {
-    if (!confirm('Svuotare tutti i check?')) return;
-    localStorage.removeItem(STATE_KEY);
-    document.querySelectorAll('.item').forEach(el => el.classList.remove('checked'));
-    document.querySelectorAll('.item-time').forEach(el => el.textContent = '');
-    document.querySelector('.special-item').classList.remove('checked');
-  }
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function overlayClose(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
 
-  function restoreState() {
-    const state = getState();
-    for (const [id, ts] of Object.entries(state)) {
-      const el = document.getElementById('item-' + id);
-      const timeEl = document.getElementById('time-' + id);
-      if (el) el.classList.add('checked');
-      if (timeEl) timeEl.textContent = formatTime(ts);
-    }
-  }
-
-  restoreState();
+// init
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+restoreState();
 </script>
 </body>
 </html>
