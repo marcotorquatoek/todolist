@@ -1,659 +1,591 @@
 <!DOCTYPE html>
-<html lang="it" data-theme="dark">
+<html lang="it" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>To Do</title>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Pulizia iPhone</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-[data-theme="dark"] {
-  --bg: #0e0e0e;
-  --surface: #161616;
-  --border: #252525;
-  --accent: #c8a96e;
-  --accent-dim: rgba(200,169,110,0.12);
-  --text: #ddd6c8;
-  --muted: #4a4a4a;
-  --done-text: #3e3e3e;
-  --danger: #7a3030;
-  --overlay: rgba(0,0,0,0.88);
-  --modal-bg: #121212;
-  --tag-red: #c0392b;
-}
-[data-theme="light"] {
-  --bg: #f5f3ef;
-  --surface: #edeae4;
-  --border: #d4cfc6;
-  --accent: #9a7640;
-  --accent-dim: rgba(154,118,64,0.1);
-  --text: #2a2520;
-  --muted: #9a9288;
-  --done-text: #b0a898;
-  --danger: #9b3a3a;
-  --overlay: rgba(0,0,0,0.5);
-  --modal-bg: #f0ede7;
-  --tag-red: #c0392b;
-}
+  :root {
+    --bg:#f5f5f5;--surface:#fff;--surface2:#fafafa;--border:#e0e0e0;
+    --text:#212121;--text2:#757575;--accent:#FF6D00;--accent2:#FF3D00;--check:#43A047;
+    --shadow:0 2px 8px rgba(0,0,0,.08);--shadow2:0 4px 16px rgba(0,0,0,.12);--radius:12px;
+  }
+  [data-theme="dark"]{
+    --bg:#121212;--surface:#1e1e1e;--surface2:#2a2a2a;--border:#333;
+    --text:#eee;--text2:#9e9e9e;
+    --shadow:0 2px 8px rgba(0,0,0,.4);--shadow2:0 4px 16px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Roboto',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;}
+  .app{max-width:480px;margin:0 auto;padding:16px;}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  /* HEADER */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 20px;position:sticky;top:0;background:var(--bg);z-index:10;}
+  .header-title{font-size:20px;font-weight:700;letter-spacing:.5px;}
+  .version-badge{font-family:'Roboto Mono',monospace;font-size:11px;color:var(--text2);background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:2px 8px;}
+  .header-actions{display:flex;gap:6px;align-items:center;}
+  .icon-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:all .2s;}
+  .icon-btn:hover{background:var(--surface2);color:var(--text);}
+  .icon-btn.danger:hover{background:#ffeee8;color:var(--accent2);border-color:var(--accent2);}
+  .icon-btn .material-icons{font-size:20px;}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Lexend', sans-serif;
-  font-size: 0.82rem;
-  min-height: 100vh;
-  padding: 32px 20px 80px;
-  transition: background 0.2s, color 0.2s;
-}
+  /* SECTIONS */
+  .section{margin-bottom:24px;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .section-title{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;}
+  .section-actions{display:flex;gap:6px;}
+  .action-btn{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:500;color:var(--text2);background:none;border:1px solid var(--border);cursor:pointer;padding:3px 8px;border-radius:6px;transition:all .2s;font-family:'Roboto',sans-serif;}
+  .action-btn.edit-btn:hover{color:var(--accent);border-color:var(--accent);}
+  .action-btn.clear-btn:hover{color:var(--accent2);border-color:var(--accent2);}
+  .action-btn .material-icons{font-size:13px;}
 
-.container { max-width: 640px; margin: 0 auto; }
+  /* CARD */
+  .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--border);}
 
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-  gap: 12px;
-}
-.header-left { display: flex; align-items: baseline; gap: 10px; }
-header h1 {
-  font-size: 1.3rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.version {
-  font-size: 0.55rem;
-  color: var(--muted);
-  border: 1px solid var(--border);
-  padding: 2px 6px;
-}
-.header-right { display: flex; align-items: center; gap: 8px; }
+  /* TODO ITEM */
+  .todo-item{display:flex;align-items:flex-start;padding:13px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;gap:10px;user-select:none;}
+  .todo-item:last-child{border-bottom:none;}
+  .todo-item:hover{background:var(--surface2);}
+  .todo-item:active{background:var(--border);}
+  .checkbox{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;margin-top:1px;pointer-events:none;}
+  .checkbox.checked{background:var(--check);border-color:var(--check);}
+  .checkbox .material-icons{font-size:14px;color:white;display:none;}
+  .checkbox.checked .material-icons{display:block;}
+  .todo-content{flex:1;min-width:0;pointer-events:none;}
+  .todo-label{font-size:14px;font-weight:400;color:var(--text);word-break:break-word;line-height:1.4;}
+  .todo-label.italic{font-style:italic;}
+  .todo-label.underline{text-decoration:underline;}
+  .todo-label.link-style{color:var(--accent);}
+  .checked-info{font-family:'Roboto Mono',monospace;font-size:10px;color:var(--check);margin-top:3px;display:none;}
+  .todo-item.is-checked .todo-label{color:var(--text2);text-decoration:line-through;}
+  .todo-item.is-checked .checked-info{display:block;}
+  .nav-arrow{color:var(--text2);font-size:18px;flex-shrink:0;pointer-events:none;margin-top:1px;}
 
-.btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  font-family: 'Lexend', sans-serif;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  padding: 5px 10px;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-.btn:hover { border-color: var(--accent); color: var(--accent); }
-.btn-danger { border-color: var(--danger); color: var(--danger); }
-.btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+  /* LINK CARD */
+  .link-card{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;cursor:pointer;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:10px;transition:all .2s;gap:8px;}
+  .link-card:hover{box-shadow:var(--shadow2);transform:translateY(-1px);}
+  .link-card-left{display:flex;align-items:center;gap:10px;}
+  .link-icon{font-size:22px;}
+  .link-label{font-size:14px;font-weight:500;color:var(--accent);}
+  .link-card .material-icons{color:var(--text2);font-size:20px;}
 
-.section { margin-bottom: 32px; animation: fadeIn 0.25s ease both; }
-.section:nth-child(2) { animation-delay: 0.04s; }
-.section:nth-child(3) { animation-delay: 0.08s; }
-.section:nth-child(4) { animation-delay: 0.12s; }
+  /* PAGES */
+  .page{display:none;}
+  .page.active{display:block;}
+  .back-btn{display:flex;align-items:center;gap:4px;font-size:14px;font-weight:500;color:var(--accent);background:none;border:none;cursor:pointer;padding:6px 0;font-family:'Roboto',sans-serif;}
+  .back-btn .material-icons{font-size:18px;}
 
-.section-title {
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
+  /* EDIT PAGE */
+  .edit-section-label{font-size:11px;font-weight:700;letter-spacing:1.2px;color:var(--text2);text-transform:uppercase;margin-bottom:8px;padding-left:2px;}
+  .edit-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+  .edit-row{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;box-shadow:var(--shadow);}
+  .edit-input{flex:1;background:transparent;border:none;outline:none;font-family:'Roboto',sans-serif;font-size:14px;color:var(--text);padding:0;}
+  .edit-input:focus{color:var(--accent);}
+  .delete-btn{background:none;border:none;cursor:pointer;color:var(--text2);display:flex;align-items:center;padding:2px;border-radius:4px;transition:color .2s;}
+  .delete-btn:hover{color:var(--accent2);}
+  .delete-btn .material-icons{font-size:18px;}
+  .add-new-row{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1.5px dashed var(--border);border-radius:10px;padding:10px 12px;margin-bottom:16px;}
+  .add-new-input{flex:1;background:transparent;border:none;outline:none;font-family:'Roboto',sans-serif;font-size:14px;color:var(--text);padding:0;}
+  .add-new-input::placeholder{color:var(--text2);}
+  .add-new-btn{background:var(--accent);color:white;border:none;cursor:pointer;border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;transition:opacity .2s;flex-shrink:0;}
+  .add-new-btn:hover{opacity:.85;}
+  .add-new-btn .material-icons{font-size:18px;}
+  .save-edit-btn{width:100%;padding:13px;background:var(--accent);color:white;border:none;cursor:pointer;border-radius:var(--radius);font-family:'Roboto',sans-serif;font-size:15px;font-weight:600;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .save-edit-btn:hover{opacity:.88;}
+  .save-edit-btn .material-icons{font-size:18px;}
 
-/* ── NATIVE CHECKBOX ITEM ── */
-input[type="checkbox"] { display: none; }
+  /* PLAYLIST TABLE */
+  .pl-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;letter-spacing:.5px;padding:3px 10px;border-radius:99px;margin-bottom:16px;}
+  .pl-chip.spotify{background:#1DB954;color:white;}
+  .pl-chip.suno{background:#7c3aed;color:white;}
+  .playlist-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);}
+  .playlist-table th{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);background:var(--surface2);padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);}
+  .playlist-table th:first-child{width:42%;border-right:1px solid var(--border);}
+  .playlist-table td{padding:0;vertical-align:top;border-bottom:1px solid var(--border);}
+  .playlist-table tr:last-child td{border-bottom:none;}
+  .playlist-table td:first-child{border-right:1px solid var(--border);}
+  .pt-cell{width:100%;min-height:44px;padding:10px 12px;background:transparent;border:none;outline:none;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text);resize:none;line-height:1.4;display:block;overflow:hidden;}
+  .pt-cell:focus{background:rgba(255,109,0,.06);color:var(--accent);}
+  .pt-row-actions{display:flex;justify-content:flex-end;padding:4px 6px;border-top:1px dashed var(--border);}
+  .pt-del{background:none;border:none;cursor:pointer;color:var(--text2);padding:2px 4px;border-radius:4px;}
+  .pt-del:hover{color:var(--accent2);}
+  .pt-del .material-icons{font-size:16px;}
+  .pt-add-row{display:flex;gap:8px;align-items:center;margin-top:12px;background:var(--surface2);border:1.5px dashed var(--border);border-radius:10px;padding:8px 12px;}
+  .pt-add-input{flex:1;background:transparent;border:none;outline:none;font-family:'Roboto',sans-serif;font-size:13px;color:var(--text);padding:0;}
+  .pt-add-input::placeholder{color:var(--text2);font-style:italic;}
+  .pt-add-btn{background:var(--accent);color:white;border:none;cursor:pointer;border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pt-add-btn .material-icons{font-size:17px;}
+  .pt-save-btn{width:100%;margin-top:16px;padding:13px;background:var(--accent);color:white;border:none;cursor:pointer;border-radius:var(--radius);font-family:'Roboto',sans-serif;font-size:15px;font-weight:600;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .pt-save-btn:hover{opacity:.88;}
+  .pt-save-btn .material-icons{font-size:18px;}
 
-label.item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 10px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, opacity 0.15s;
-  user-select: none;
-}
-label.item:hover { background: var(--surface); border-color: var(--border); }
+  /* DIALOG */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
+  .overlay.show{display:flex;}
+  .dialog{background:var(--surface);border-radius:16px;padding:24px;max-width:320px;width:90%;box-shadow:var(--shadow2);}
+  .dialog h3{font-size:16px;font-weight:600;margin-bottom:8px;}
+  .dialog p{font-size:13px;color:var(--text2);margin-bottom:20px;}
+  .dialog-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .btn{padding:8px 18px;border-radius:8px;border:none;cursor:pointer;font-family:'Roboto',sans-serif;font-size:14px;font-weight:500;transition:all .2s;}
+  .btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-danger{background:var(--accent2);color:white;}
+  .btn-ghost:hover{background:var(--border);}
+  .btn-danger:hover{opacity:.85;}
 
-/* checked state driven by sibling checkbox */
-input[type="checkbox"]:checked + label.item {
-  opacity: 0.35;
-}
-input[type="checkbox"]:checked + label.item .item-label {
-  text-decoration: line-through;
-  color: var(--done-text);
-}
-input[type="checkbox"]:checked + label.item .box {
-  border-color: var(--accent);
-  background: var(--accent-dim);
-}
-input[type="checkbox"]:checked + label.item .box .checkmark {
-  display: block;
-}
-input[type="checkbox"]:checked + label.item .item-time {
-  color: var(--accent);
-}
-
-.box {
-  width: 15px; height: 15px;
-  border: 1px solid var(--muted);
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.12s;
-}
-.checkmark {
-  display: none;
-  width: 7px; height: 7px;
-  background: var(--accent);
-}
-
-.item-label { flex: 1; font-weight: 500; line-height: 1.4; }
-
-.item-time {
-  font-size: 0.6rem;
-  color: var(--muted);
-  white-space: nowrap;
-  text-align: right;
-  min-width: 72px;
-}
-
-/* edit button */
-.edit-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 0.8rem;
-  cursor: pointer;
-  padding: 2px 5px;
-  opacity: 0;
-  transition: opacity 0.12s, color 0.12s;
-  flex-shrink: 0;
-  line-height: 1;
-}
-label.item:hover .edit-btn { opacity: 1; }
-.edit-btn:hover { color: var(--accent); }
-
-/* edit input */
-.edit-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--accent);
-  color: var(--text);
-  font-family: 'Lexend', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 500;
-  outline: none;
-  padding: 1px 2px;
-}
-
-/* link item */
-.link-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border: 1px solid var(--accent);
-  background: var(--accent-dim);
-  cursor: pointer;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--accent);
-  margin-bottom: 4px;
-  transition: background 0.15s;
-  user-select: none;
-}
-.link-item:hover { background: rgba(200,169,110,0.22); }
-.link-item .arrow { margin-left: auto; opacity: 0.5; }
-
-/* modal */
-.modal-overlay {
-  display: none;
-  position: fixed; inset: 0;
-  background: var(--overlay);
-  z-index: 100;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 48px 20px 40px;
-  overflow-y: auto;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--modal-bg);
-  border: 1px solid var(--border);
-  width: 100%; max-width: 580px;
-  padding: 24px 22px;
-  animation: slideUp 0.18s ease;
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-.modal-title {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.modal-close {
-  background: none; border: none;
-  color: var(--muted); font-size: 1rem;
-  cursor: pointer; padding: 2px 6px;
-  transition: color 0.1s;
-}
-.modal-close:hover { color: var(--text); }
-.modal-group-label {
-  font-size: 0.57rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin: 14px 0 6px;
-}
-.tag-red { color: var(--tag-red); }
-
-footer {
-  margin-top: 40px;
-  text-align: center;
-  font-size: 0.55rem;
-  color: var(--muted);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(3px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#323232;color:#fff;border-radius:8px;padding:10px 20px;font-size:13px;z-index:999;transition:transform .3s;pointer-events:none;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <header>
-    <div class="header-left">
-      <h1>To Do</h1>
-      <span class="version">v11</span>
-    </div>
-    <div class="header-right">
-      <button class="btn" id="theme-btn" onclick="toggleTheme()">☀ chiaro</button>
-      <button class="btn btn-danger" onclick="clearAll()">svuota</button>
-    </div>
-  </header>
-
-  <!-- PRINCIPALI -->
-  <div class="section">
-    <div class="section-title">Principali</div>
-    <input type="checkbox" id="chk-portafoglio" onchange="onCheck('portafoglio')">
-    <label class="item" for="chk-portafoglio">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-portafoglio">PORTAFOGLIO + CC — 02/04</span>
-      <span class="item-time" id="time-portafoglio"></span>
-      <button class="edit-btn" onclick="startEdit(event,'portafoglio')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-googlefoto" onchange="onCheck('googlefoto')">
-    <label class="item" for="chk-googlefoto">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-googlefoto">Google Foto — 31/03</span>
-      <span class="item-time" id="time-googlefoto"></span>
-      <button class="edit-btn" onclick="startEdit(event,'googlefoto')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-galeria" onchange="onCheck('galeria')">
-    <label class="item" for="chk-galeria">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-galeria">Pulire Galleria</span>
-      <span class="item-time" id="time-galeria"></span>
-      <button class="edit-btn" onclick="startEdit(event,'galeria')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-email" onchange="onCheck('email')">
-    <label class="item" for="chk-email">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-email">E-Mail</span>
-      <span class="item-time" id="time-email"></span>
-      <button class="edit-btn" onclick="startEdit(event,'email')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-spotify" onchange="onCheck('spotify')">
-    <label class="item" for="chk-spotify">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-spotify">Playlist Spotify</span>
-      <span class="item-time" id="time-spotify"></span>
-      <button class="edit-btn" onclick="startEdit(event,'spotify')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-suno" onchange="onCheck('suno')">
-    <label class="item" for="chk-suno">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-suno">Playlist SUNO</span>
-      <span class="item-time" id="time-suno"></span>
-      <button class="edit-btn" onclick="startEdit(event,'suno')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-shazam" onchange="onCheck('shazam')">
-    <label class="item" for="chk-shazam">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-shazam">Check Shazam</span>
-      <span class="item-time" id="time-shazam"></span>
-      <button class="edit-btn" onclick="startEdit(event,'shazam')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-note" onchange="onCheck('note')">
-    <label class="item" for="chk-note">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-note">Note</span>
-      <span class="item-time" id="time-note"></span>
-      <button class="edit-btn" onclick="startEdit(event,'note')">✎</button>
-    </label>
-  </div>
-
-  <!-- PULIZIA -->
-  <div class="section">
-    <div class="section-title">Pulizia</div>
-    <div class="link-item" onclick="openModal('modal-pulizia')">
-      <span>Pulizia avanzata</span>
-      <span class="arrow">→</span>
-    </div>
-    <input type="checkbox" id="chk-icloud" onchange="onCheck('icloud')">
-    <label class="item" for="chk-icloud">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-icloud">Pulizia File + iCloud</span>
-      <span class="item-time" id="time-icloud"></span>
-      <button class="edit-btn" onclick="startEdit(event,'icloud')">✎</button>
-    </label>
-  </div>
-
-  <!-- DA RIORDINARE -->
-  <div class="section">
-    <div class="section-title">Da Riordinare</div>
-
-    <input type="checkbox" id="chk-gdrive" onchange="onCheck('gdrive')">
-    <label class="item" for="chk-gdrive">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-gdrive">Google Drive</span>
-      <span class="item-time" id="time-gdrive"></span>
-      <button class="edit-btn" onclick="startEdit(event,'gdrive')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-goplayer" onchange="onCheck('goplayer')">
-    <label class="item" for="chk-goplayer">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-goplayer">Musica su GoPlayer</span>
-      <span class="item-time" id="time-goplayer"></span>
-      <button class="edit-btn" onclick="startEdit(event,'goplayer')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-telegram" onchange="onCheck('telegram')">
-    <label class="item" for="chk-telegram">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-telegram">Ordine Telegram (Chat e Archivi)</span>
-      <span class="item-time" id="time-telegram"></span>
-      <button class="edit-btn" onclick="startEdit(event,'telegram')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-canva" onchange="onCheck('canva')">
-    <label class="item" for="chk-canva">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-canva">Canva</span>
-      <span class="item-time" id="time-canva"></span>
-      <button class="edit-btn" onclick="startEdit(event,'canva')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-capcut" onchange="onCheck('capcut')">
-    <label class="item" for="chk-capcut">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-capcut">CapCut</span>
-      <span class="item-time" id="time-capcut"></span>
-      <button class="edit-btn" onclick="startEdit(event,'capcut')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-pc" onchange="onCheck('pc')">
-    <label class="item" for="chk-pc">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-pc">PC</span>
-      <span class="item-time" id="time-pc"></span>
-      <button class="edit-btn" onclick="startEdit(event,'pc')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-messaggi" onchange="onCheck('messaggi')">
-    <label class="item" for="chk-messaggi">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-messaggi">Messaggi</span>
-      <span class="item-time" id="time-messaggi"></span>
-      <button class="edit-btn" onclick="startEdit(event,'messaggi')">✎</button>
-    </label>
-
-    <div class="link-item" onclick="openModal('modal-altre')">
-      <span>Altre</span>
-      <span class="arrow">→</span>
-    </div>
-  </div>
-
-  <footer>stato salvato in locale</footer>
-</div>
-
-<!-- MODAL PULIZIA AVANZATA -->
-<div class="modal-overlay" id="modal-pulizia" onclick="overlayClose(event,'modal-pulizia')">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Pulizia Avanzata</span>
-      <button class="modal-close" onclick="closeModal('modal-pulizia')">✕</button>
+<!-- ===== MAIN ===== -->
+<div class="page active" id="page-main">
+  <div class="app">
+    <div class="header">
+      <div class="header-title">🌟 Pulizia iPhone</div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn danger" title="Svuota tutti i check" onclick="clearAll()">
+          <span class="material-icons">layers_clear</span>
+        </button>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
     </div>
 
-    <div class="modal-group-label">Andando in Generali</div>
-    <input type="checkbox" id="chk-spazio-iphone" onchange="onCheck('spazio-iphone')">
-    <label class="item" for="chk-spazio-iphone">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-spazio-iphone">Pulizia "Spazio iPhone" — dimensioni occupate da ogni app</span>
-      <span class="item-time" id="time-spazio-iphone"></span>
-      <button class="edit-btn" onclick="startEdit(event,'spazio-iphone')">✎</button>
-    </label>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Principali</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('principali','page-main')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('principali')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="card" id="list-principali"></div>
+    </div>
 
-    <div class="modal-group-label">Andando in Marco Torquato → iCloud</div>
-    <input type="checkbox" id="chk-spazio-icloud" onchange="onCheck('spazio-icloud')">
-    <label class="item" for="chk-spazio-icloud">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-spazio-icloud">Pulizia <span class="tag-red">"Spazio"</span> — dimensioni cloud da ogni app</span>
-      <span class="item-time" id="time-spazio-icloud"></span>
-      <button class="edit-btn" onclick="startEdit(event,'spazio-icloud')">✎</button>
-    </label>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Pulizia</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('pulizia','page-main')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('pulizia')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="link-card" onclick="goTo('page-pulizia')">
+        <div class="link-card-left"><span class="link-icon">🧼</span><span class="link-label">(clicca per pulizia avanzata)</span></div>
+        <span class="material-icons">chevron_right</span>
+      </div>
+      <div class="card" id="list-pulizia"></div>
+    </div>
 
-    <input type="checkbox" id="chk-backup-icloud" onchange="onCheck('backup-icloud')">
-    <label class="item" style="padding-left:28px" for="chk-backup-icloud">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-backup-icloud">Pulizia "Backup iCloud" — contenuto del backup giornaliero. Si riflette nello <span class="tag-red">Spazio</span> sopra</span>
-      <span class="item-time" id="time-backup-icloud"></span>
-      <button class="edit-btn" onclick="startEdit(event,'backup-icloud')">✎</button>
-    </label>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Da Riordinare</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('riordinare','page-main')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('riordinare')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="card" id="list-riordinare"></div>
+    </div>
   </div>
 </div>
 
-<!-- MODAL ALTRE -->
-<div class="modal-overlay" id="modal-altre" onclick="overlayClose(event,'modal-altre')">
-  <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">Altre</span>
-      <button class="modal-close" onclick="closeModal('modal-altre')">✕</button>
+<!-- ===== PULIZIA AVANZATA ===== -->
+<div class="page" id="page-pulizia">
+  <div class="app">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" onclick="goTo('page-main')"><span class="material-icons">arrow_back_ios</span></button>
+        <span style="font-size:18px;font-weight:700;">🧼 Pulizia Avanzata</span>
+      </div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn danger" title="Svuota tutti i check" onclick="clearAll()"><span class="material-icons">layers_clear</span></button>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
     </div>
-
-    <input type="checkbox" id="chk-ig" onchange="onCheck('ig')">
-    <label class="item" for="chk-ig">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-ig">IG</span>
-      <span class="item-time" id="time-ig"></span>
-      <button class="edit-btn" onclick="startEdit(event,'ig')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-ig2" onchange="onCheck('ig2')">
-    <label class="item" for="chk-ig2">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-ig2">IG2</span>
-      <span class="item-time" id="time-ig2"></span>
-      <button class="edit-btn" onclick="startEdit(event,'ig2')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-tiktok" onchange="onCheck('tiktok')">
-    <label class="item" for="chk-tiktok">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-tiktok">TikTok</span>
-      <span class="item-time" id="time-tiktok"></span>
-      <button class="edit-btn" onclick="startEdit(event,'tiktok')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-facebook" onchange="onCheck('facebook')">
-    <label class="item" for="chk-facebook">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-facebook">Facebook</span>
-      <span class="item-time" id="time-facebook"></span>
-      <button class="edit-btn" onclick="startEdit(event,'facebook')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-galleria2" onchange="onCheck('galleria2')">
-    <label class="item" for="chk-galleria2">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-galleria2">Galleria</span>
-      <span class="item-time" id="time-galleria2"></span>
-      <button class="edit-btn" onclick="startEdit(event,'galleria2')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-igmex" onchange="onCheck('igmex')">
-    <label class="item" for="chk-igmex">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-igmex">IG-Mex</span>
-      <span class="item-time" id="time-igmex"></span>
-      <button class="edit-btn" onclick="startEdit(event,'igmex')">✎</button>
-    </label>
-
-    <input type="checkbox" id="chk-tgclose" onchange="onCheck('tgclose')">
-    <label class="item" for="chk-tgclose">
-      <div class="box"><div class="checkmark"></div></div>
-      <span class="item-label" id="label-tgclose">TG-Close</span>
-      <span class="item-time" id="time-tgclose"></span>
-      <button class="edit-btn" onclick="startEdit(event,'tgclose')">✎</button>
-    </label>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title" style="font-size:10px;color:var(--text2);">Andando in GENERALI</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('pulizia-generali','page-pulizia')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('pulizia-generali')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="card" id="list-pulizia-generali"></div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title" style="font-size:10px;color:var(--text2);">Andando in Marco Torquato → iCloud</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('pulizia-icloud','page-pulizia')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('pulizia-icloud')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="card" id="list-pulizia-icloud"></div>
+    </div>
   </div>
 </div>
+
+<!-- ===== ALTRE ===== -->
+<div class="page" id="page-altre">
+  <div class="app">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" onclick="goTo('page-main')"><span class="material-icons">arrow_back_ios</span></button>
+        <span style="font-size:18px;font-weight:700;">Altre</span>
+      </div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn danger" title="Svuota tutti i check" onclick="clearAll()"><span class="material-icons">layers_clear</span></button>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <span class="section-title">Social &amp; Altro</span>
+        <div class="section-actions">
+          <button class="action-btn edit-btn" onclick="goToEdit('altre','page-altre')"><span class="material-icons">edit</span> Modifica</button>
+          <button class="action-btn clear-btn" onclick="clearSection('altre')"><span class="material-icons">delete_sweep</span> Svuota</button>
+        </div>
+      </div>
+      <div class="card" id="list-altre"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLAYLIST SPOTIFY ===== -->
+<div class="page" id="page-playlist-spotify">
+  <div class="app">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" onclick="goTo('page-main')"><span class="material-icons">arrow_back_ios</span></button>
+        <span style="font-size:18px;font-weight:700;">Playlist Spotify</span>
+      </div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
+    </div>
+    <span class="pl-chip spotify">🎵 Spotify</span>
+    <table class="playlist-table">
+      <thead><tr><th>Playlist</th><th>Ultimo brano aggiunto</th></tr></thead>
+      <tbody id="pt-spotify-body"></tbody>
+    </table>
+    <div class="pt-add-row">
+      <input class="pt-add-input" id="pt-spotify-add" placeholder="Nome nuova playlist...">
+      <button class="pt-add-btn" onclick="ptAddRow('spotify')"><span class="material-icons">add</span></button>
+    </div>
+    <button class="pt-save-btn" onclick="ptSave('spotify')">
+      <span class="material-icons">check_circle</span> Salva
+    </button>
+  </div>
+</div>
+
+<!-- ===== PLAYLIST SUNO ===== -->
+<div class="page" id="page-playlist-suno">
+  <div class="app">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" onclick="goTo('page-main')"><span class="material-icons">arrow_back_ios</span></button>
+        <span style="font-size:18px;font-weight:700;">Playlist SUNO</span>
+      </div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
+    </div>
+    <span class="pl-chip suno">🎶 SUNO</span>
+    <table class="playlist-table">
+      <thead><tr><th>Playlist</th><th>Ultimo brano aggiunto</th></tr></thead>
+      <tbody id="pt-suno-body"></tbody>
+    </table>
+    <div class="pt-add-row">
+      <input class="pt-add-input" id="pt-suno-add" placeholder="Nome nuova playlist...">
+      <button class="pt-add-btn" onclick="ptAddRow('suno')"><span class="material-icons">add</span></button>
+    </div>
+    <button class="pt-save-btn" onclick="ptSave('suno')">
+      <span class="material-icons">check_circle</span> Salva
+    </button>
+  </div>
+</div>
+
+<!-- ===== EDIT PAGE ===== -->
+<div class="page" id="page-edit">
+  <div class="app">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="back-btn" id="edit-back-btn"><span class="material-icons">arrow_back_ios</span></button>
+        <span style="font-size:18px;font-weight:700;">✏️ Modifica lista</span>
+      </div>
+      <div class="header-actions">
+        <span class="version-badge">v4.0</span>
+        <button class="icon-btn theme-toggle"><span class="material-icons theme-icon">dark_mode</span></button>
+      </div>
+    </div>
+    <div id="edit-section-label" class="edit-section-label"></div>
+    <div class="edit-list" id="edit-list"></div>
+    <div class="add-new-row">
+      <input class="add-new-input" id="edit-add-input" placeholder="Nuova voce..."
+        onkeydown="if(event.key==='Enter')commitNewItem()">
+      <button class="add-new-btn" onclick="commitNewItem()"><span class="material-icons">add</span></button>
+    </div>
+    <button class="save-edit-btn" onclick="saveEdit()">
+      <span class="material-icons">check_circle</span> Salva modifiche
+    </button>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="overlay" id="confirm-overlay">
+  <div class="dialog">
+    <h3 id="dlg-title">Svuota sezione</h3>
+    <p id="dlg-body">Rimuovere tutti i check da questa sezione?</p>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" onclick="closeDialog()">Annulla</button>
+      <button class="btn btn-danger" id="confirm-ok">Svuota</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-const STATE_KEY  = 'todo_state_v2';
-const LABELS_KEY = 'todo_labels_v1';
-const THEME_KEY  = 'todo_theme';
+const VERSION = "v4.0";
 
-function getState()  { try { return JSON.parse(localStorage.getItem(STATE_KEY))  || {}; } catch { return {}; } }
-function saveState(s){ localStorage.setItem(STATE_KEY, JSON.stringify(s)); }
-function getLabels() { try { return JSON.parse(localStorage.getItem(LABELS_KEY)) || {}; } catch { return {}; } }
-function saveLabels(l){ localStorage.setItem(LABELS_KEY, JSON.stringify(l)); }
+// ── DEFAULT DATA ──────────────────────────────────────────────
+const defaultData = {
+  principali:[
+    {id:'p1',label:'PORTAFOGLIO + CC',style:'italic underline',checked:false,checkedAt:null},
+    {id:'p2',label:'Google Foto',checked:false,checkedAt:null},
+    {id:'p3',label:'Pulire Galleria',checked:false,checkedAt:null},
+    {id:'p4',label:'E-Mail',checked:false,checkedAt:null},
+    {id:'p5',label:'Playlist Spotify',style:'link-style',isSubLink:true,subPage:'page-playlist-spotify',checked:false,checkedAt:null},
+    {id:'p6',label:'Playlist SUNO',isSubLink:true,subPage:'page-playlist-suno',checked:false,checkedAt:null},
+    {id:'p7',label:'Check Shazam',checked:false,checkedAt:null},
+    {id:'p8',label:'Note',checked:false,checkedAt:null},
+  ],
+  pulizia:[
+    {id:'pu1',label:'Pulizia File + iCloud',checked:false,checkedAt:null},
+  ],
+  riordinare:[
+    {id:'r1',label:'Google Drive',checked:false,checkedAt:null},
+    {id:'r2',label:'Musica su GoPlayer',checked:false,checkedAt:null},
+    {id:'r3',label:'Ordine Telegram (Chat e Archivi)',checked:false,checkedAt:null},
+    {id:'r4',label:'Canva',checked:false,checkedAt:null},
+    {id:'r5',label:'CapCut',checked:false,checkedAt:null},
+    {id:'r6',label:'PC',checked:false,checkedAt:null},
+    {id:'r7',label:'Messaggi',checked:false,checkedAt:null},
+    {id:'r8',label:'📋 Altre',isSubLink:true,subPage:'page-altre',checked:false,checkedAt:null},
+  ],
+  'pulizia-generali':[
+    {id:'pg1',label:'Pulizia "Spazio iPhone" — dimensioni occupate sul telefono da ogni singola app',checked:false,checkedAt:null},
+  ],
+  'pulizia-icloud':[
+    {id:'pi1',label:'Pulizia "Spazio" — dimensioni occupate sul cloud da ogni singola app',checked:false,checkedAt:null},
+    {id:'pi2',label:'Pulizia "Backup iCloud" — tutto ciò incluso nel backup giornaliero (si riflette nello Spazio sopra)',checked:false,checkedAt:null},
+  ],
+  altre:[
+    {id:'a1',label:'IG',checked:false,checkedAt:null},
+    {id:'a2',label:'IG2',checked:false,checkedAt:null},
+    {id:'a3',label:'TikTok',checked:false,checkedAt:null},
+    {id:'a4',label:'Facebook',checked:false,checkedAt:null},
+    {id:'a5',label:'Galleria',checked:false,checkedAt:null},
+    {id:'a6',label:'IG Mex',checked:false,checkedAt:null},
+    {id:'a7',label:'TG Close',checked:false,checkedAt:null},
+  ],
+};
 
-function fmt(ts) {
-  if (!ts) return '';
-  const d = new Date(ts);
-  return String(d.getDate()).padStart(2,'0') + '/' +
-         String(d.getMonth()+1).padStart(2,'0') + ' ' +
-         String(d.getHours()).padStart(2,'0') + ':' +
-         String(d.getMinutes()).padStart(2,'0');
-}
+const defaultPlaylists = {
+  spotify:[
+    {id:'sp1',name:'Ultimo agg. Brani ❤️',last:'NI BORRACHO'},
+    {id:'sp2',name:'Latin 🍑',last:'Mirame Baby FEID 20/02 ✅'},
+    {id:'sp3',name:'Italia 🇮🇹 (+OcchiLucidi)',last:'Terapia 3 20/02 ✅'},
+    {id:'sp4',name:'Music 🌍 (+SAD NIGHTS)',last:'End of Beginning 20/02 ✅'},
+  ],
+  suno:[
+    {id:'su1',name:'SUNO ultimo like organizzato in playlist',last:'Cenere e fuoco mio ✅'},
+  ],
+};
 
-function onCheck(id) {
-  const chk    = document.getElementById('chk-' + id);
-  const timeEl = document.getElementById('time-' + id);
-  const state  = getState();
-  if (chk.checked) {
-    state[id] = Date.now();
-    if (timeEl) timeEl.textContent = fmt(state[id]);
-  } else {
-    delete state[id];
-    if (timeEl) timeEl.textContent = '';
-  }
-  saveState(state);
-}
+// ── STATE ─────────────────────────────────────────────────────
+let state = (()=>{ try{const s=localStorage.getItem('pulizia-v4');if(s)return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(defaultData)); })();
+const save = ()=>localStorage.setItem('pulizia-v4',JSON.stringify(state));
 
-function startEdit(e, id) {
-  e.preventDefault();  // prevent label from toggling checkbox
-  e.stopPropagation();
-  const labelEl = document.getElementById('label-' + id);
-  if (!labelEl || labelEl.querySelector('input')) return;
+let playlists = (()=>{ try{const s=localStorage.getItem('pulizia-pl-v4');if(s)return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(defaultPlaylists)); })();
+const savePl = ()=>localStorage.setItem('pulizia-pl-v4',JSON.stringify(playlists));
 
-  const original = labelEl.textContent;
-  const input = document.createElement('input');
-  input.className = 'edit-input';
-  input.value = original;
-  labelEl.textContent = '';
-  labelEl.appendChild(input);
-  input.focus();
-  input.select();
+// ── HELPERS ───────────────────────────────────────────────────
+const pad = n=>String(n).padStart(2,'0');
+function fmt(iso){ if(!iso)return''; const d=new Date(iso); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function uid(p){ return p+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,5); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  const finish = (save) => {
-    const val = save && input.value.trim() ? input.value.trim() : original;
-    labelEl.textContent = val;
-    if (save && val !== original) {
-      const labels = getLabels();
-      labels[id] = val;
-      saveLabels(labels);
+// ── RENDER TODO LISTS ─────────────────────────────────────────
+function renderList(key){
+  const c=document.getElementById('list-'+key); if(!c)return;
+  c.innerHTML='';
+  (state[key]||[]).forEach(item=>{
+    const row=document.createElement('div');
+    const sc=(item.style||'').split(' ').filter(Boolean).join(' ');
+    if(item.isSubLink){
+      row.className='todo-item'+(item.checked?' is-checked':'');
+      row.innerHTML=`<div class="checkbox ${item.checked?'checked':''}"><span class="material-icons">check</span></div>
+        <div class="todo-content"><div class="todo-label link-style" style="color:var(--accent);font-weight:500;">${esc(item.label)}</div>
+        <div class="checked-info">${item.checkedAt?'✓ '+fmt(item.checkedAt):''}</div></div>
+        <span class="material-icons nav-arrow">chevron_right</span>`;
+      row.addEventListener('click',e=>{
+        const x=e.clientX-row.getBoundingClientRect().left;
+        if(x<44) toggle(key,item.id); else goTo(item.subPage);
+      });
+    } else {
+      row.className='todo-item'+(item.checked?' is-checked':'');
+      row.innerHTML=`<div class="checkbox ${item.checked?'checked':''}"><span class="material-icons">check</span></div>
+        <div class="todo-content"><div class="todo-label ${sc}">${esc(item.label)}</div>
+        <div class="checked-info">${item.checkedAt?'✓ '+fmt(item.checkedAt):''}</div></div>`;
+      row.addEventListener('click',()=>toggle(key,item.id));
     }
-  };
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter')  { e.preventDefault(); finish(true); }
-    if (e.key === 'Escape') { e.preventDefault(); finish(false); }
+    c.appendChild(row);
   });
-  input.addEventListener('blur', () => finish(true));
 }
 
-function clearAll() {
-  if (!confirm('Svuotare tutti i check?')) return;
-  saveState({});
-  document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
-  document.querySelectorAll('.item-time').forEach(el => el.textContent = '');
+function renderAll(){ Object.keys(state).forEach(k=>renderList(k)); syncBadges(); }
+function syncBadges(){ document.querySelectorAll('.version-badge').forEach(el=>el.textContent=VERSION); }
+
+// ── TOGGLE ────────────────────────────────────────────────────
+function toggle(section,id){
+  const item=state[section].find(i=>i.id===id); if(!item)return;
+  item.checked=!item.checked; item.checkedAt=item.checked?new Date().toISOString():null;
+  save(); renderList(section);
 }
 
-function restoreState() {
-  const state = getState();
-  for (const [id, ts] of Object.entries(state)) {
-    const chk    = document.getElementById('chk-' + id);
-    const timeEl = document.getElementById('time-' + id);
-    if (chk) chk.checked = true;
-    if (timeEl) timeEl.textContent = fmt(ts);
-  }
+// ── CLEAR SECTION ─────────────────────────────────────────────
+let pendingClear=null;
+function clearSection(section){
+  pendingClear=section;
+  document.getElementById('dlg-title').textContent='Svuota sezione';
+  document.getElementById('dlg-body').textContent='Rimuovere tutti i check da questa sezione?';
+  document.getElementById('confirm-overlay').classList.add('show');
+  document.getElementById('confirm-ok').onclick=()=>{
+    state[pendingClear].forEach(i=>{i.checked=false;i.checkedAt=null;});
+    save(); renderList(pendingClear); closeDialog(); showToast('Sezione svuotata');
+  };
 }
 
-function restoreLabels() {
-  const labels = getLabels();
-  for (const [id, text] of Object.entries(labels)) {
-    const el = document.getElementById('label-' + id);
-    if (el) el.textContent = text;
-  }
+// ── CLEAR ALL ─────────────────────────────────────────────────
+function clearAll(){
+  document.getElementById('dlg-title').textContent='Svuota tutto';
+  document.getElementById('dlg-body').textContent='Rimuovere TUTTI i check da tutte le sezioni?';
+  document.getElementById('confirm-overlay').classList.add('show');
+  document.getElementById('confirm-ok').onclick=()=>{
+    Object.keys(state).forEach(k=>state[k].forEach(i=>{i.checked=false;i.checkedAt=null;}));
+    save(); renderAll(); closeDialog(); showToast('Tutto svuotato ✓');
+  };
 }
 
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  document.getElementById('theme-btn').textContent = t === 'dark' ? '☀ chiaro' : '☾ scuro';
-}
-function toggleTheme() {
-  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
+function closeDialog(){ document.getElementById('confirm-overlay').classList.remove('show'); }
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function goTo(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='page-playlist-spotify') ptRender('spotify');
+  if(id==='page-playlist-suno') ptRender('suno');
 }
 
-function openModal(id)  { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
-function overlayClose(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+// ── EDIT PAGE ─────────────────────────────────────────────────
+let editSection=null, editReturn='page-main', editDraft=[];
+const NAMES={principali:'Principali',pulizia:'Pulizia',riordinare:'Da Riordinare','pulizia-generali':'Generali','pulizia-icloud':'iCloud','altre':'Altre'};
 
-applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
-restoreLabels();
-restoreState();
+function goToEdit(key,ret){
+  editSection=key; editReturn=ret;
+  editDraft=state[key].map(i=>({...i}));
+  document.getElementById('edit-section-label').textContent=NAMES[key]||key;
+  document.getElementById('edit-back-btn').onclick=()=>goTo(editReturn);
+  document.getElementById('edit-add-input').value='';
+  renderEditList();
+  goTo('page-edit');
+}
+function renderEditList(){
+  const c=document.getElementById('edit-list'); c.innerHTML='';
+  editDraft.forEach((item,i)=>{
+    const row=document.createElement('div');
+    row.className='edit-row';
+    row.innerHTML=`<input class="edit-input" value="${esc(item.label)}" oninput="editDraft[${i}].label=this.value" placeholder="Testo voce">
+      <button class="delete-btn" onclick="removeItem(${i})"><span class="material-icons">delete_outline</span></button>`;
+    c.appendChild(row);
+  });
+}
+function removeItem(i){ editDraft.splice(i,1); renderEditList(); }
+function commitNewItem(){
+  const inp=document.getElementById('edit-add-input');
+  const t=inp.value.trim(); if(!t)return;
+  editDraft.push({id:uid(editSection),label:t,checked:false,checkedAt:null});
+  inp.value=''; renderEditList();
+  document.getElementById('edit-list').lastElementChild?.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function saveEdit(){
+  document.querySelectorAll('#edit-list .edit-input').forEach((inp,i)=>{ if(editDraft[i])editDraft[i].label=inp.value.trim()||editDraft[i].label; });
+  const valid=editDraft.filter(i=>i.label.trim());
+  valid.forEach(item=>{ const orig=state[editSection].find(o=>o.id===item.id); if(orig){item.checked=orig.checked;item.checkedAt=orig.checkedAt;} });
+  state[editSection]=valid; save(); renderList(editSection);
+  showToast('Lista aggiornata ✓'); goTo(editReturn);
+}
+
+// ── PLAYLIST TABLES ───────────────────────────────────────────
+function ptRender(type){
+  const tbody=document.getElementById('pt-'+type+'-body'); if(!tbody)return;
+  tbody.innerHTML='';
+  (playlists[type]||[]).forEach((row,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><textarea class="pt-cell" oninput="ptResize(this);playlists['${type}'][${i}].name=this.value">${esc(row.name)}</textarea></td>
+      <td>
+        <textarea class="pt-cell" oninput="ptResize(this);playlists['${type}'][${i}].last=this.value">${esc(row.last)}</textarea>
+        <div class="pt-row-actions"><button class="pt-del" onclick="ptDel('${type}',${i})"><span class="material-icons">delete_outline</span></button></div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('.pt-cell').forEach(ta=>ptResize(ta));
+}
+function ptResize(ta){ ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+function ptAddRow(type){
+  const inp=document.getElementById('pt-'+type+'-add');
+  playlists[type].push({id:'pt_'+Date.now(),name:inp.value.trim()||'',last:''});
+  inp.value=''; ptRender(type);
+  const rows=document.querySelectorAll('#pt-'+type+'-body tr');
+  if(rows.length) rows[rows.length-1].querySelector('.pt-cell')?.focus();
+}
+function ptDel(type,i){ playlists[type].splice(i,1); ptRender(type); }
+function ptSave(type){
+  document.querySelectorAll('#pt-'+type+'-body tr').forEach((tr,i)=>{
+    const cells=tr.querySelectorAll('.pt-cell');
+    if(playlists[type][i]){ playlists[type][i].name=cells[0]?.value||''; playlists[type][i].last=cells[1]?.value||''; }
+  });
+  savePl(); showToast('Playlist salvata ✓');
+}
+
+// ── THEME ─────────────────────────────────────────────────────
+function setTheme(dark){
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+  document.querySelectorAll('.theme-icon').forEach(el=>el.textContent=dark?'light_mode':'dark_mode');
+  localStorage.setItem('pulizia-theme',dark?'dark':'light');
+}
+function toggleTheme(){ setTheme(document.documentElement.getAttribute('data-theme')!=='dark'); }
+document.querySelectorAll('.theme-toggle').forEach(b=>b.addEventListener('click',toggleTheme));
+if(localStorage.getItem('pulizia-theme')==='dark') setTheme(true);
+
+// ── TOAST ─────────────────────────────────────────────────────
+let tt;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2200); }
+
+// ── INIT ──────────────────────────────────────────────────────
+renderAll();
 </script>
 </body>
 </html>
