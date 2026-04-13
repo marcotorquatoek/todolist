@@ -125,6 +125,12 @@
   .pt-save-btn:hover{opacity:.88;}
   .pt-save-btn .material-icons{font-size:18px;}
 
+  /* PIN CODE WIDGET */
+  .pin-widget{display:flex;align-items:center;gap:4px;flex-shrink:0;pointer-events:all;}
+  .pin-box{width:28px;height:32px;border:1.5px solid var(--border);border-radius:6px;background:var(--surface2);text-align:center;font-family:'Roboto Mono',monospace;font-size:15px;font-weight:500;color:var(--text);outline:none;padding:0;caret-color:var(--accent);}
+  .pin-box:focus{border-color:var(--accent);background:var(--surface);}
+  .pin-sep{font-size:16px;color:var(--text2);font-weight:300;line-height:1;user-select:none;}
+
   /* DIALOG */
   .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
   .overlay.show{display:flex;}
@@ -359,7 +365,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "v4.0";
+const VERSION = "v5.0";
 
 // ── DEFAULT DATA ──────────────────────────────────────────────
 const defaultData = {
@@ -429,6 +435,59 @@ function fmt(iso){ if(!iso)return''; const d=new Date(iso); return `${pad(d.getD
 function uid(p){ return p+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,5); }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── PIN CODES (p1, p2) ───────────────────────────────────────
+const PIN_IDS = ['p1','p2'];
+let pins = (()=>{ try{const s=localStorage.getItem('pulizia-pins');if(s)return JSON.parse(s);}catch(e){} return {p1:['',''],p2:['','']}; })();
+const savePins = ()=>localStorage.setItem('pulizia-pins',JSON.stringify(pins));
+
+function buildPinWidget(itemId){
+  // returns a div.pin-widget with two 2-char inputs separated by /
+  const wrap = document.createElement('div');
+  wrap.className = 'pin-widget';
+  wrap.addEventListener('click', e=>e.stopPropagation()); // don't toggle checkbox
+
+  const vals = pins[itemId] || ['',''];
+
+  for(let i=0;i<2;i++){
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.inputMode = 'numeric';
+    inp.maxLength = 2;
+    inp.className = 'pin-box';
+    inp.value = vals[i];
+    inp.dataset.itemId = itemId;
+    inp.dataset.idx = i;
+
+    inp.addEventListener('input', e=>{
+      // keep only digits, max 2
+      inp.value = inp.value.replace(/\D/g,'').slice(0,2);
+      pins[itemId][i] = inp.value;
+      savePins();
+      // auto-advance to next box when 2 digits typed
+      if(inp.value.length === 2 && i === 0){
+        wrap.querySelectorAll('.pin-box')[1].focus();
+      }
+    });
+
+    inp.addEventListener('keydown', e=>{
+      // backspace on empty: go back
+      if(e.key==='Backspace' && inp.value==='' && i===1){
+        wrap.querySelectorAll('.pin-box')[0].focus();
+      }
+    });
+
+    wrap.appendChild(inp);
+
+    if(i===0){
+      const sep = document.createElement('span');
+      sep.className = 'pin-sep';
+      sep.textContent = '/';
+      wrap.appendChild(sep);
+    }
+  }
+  return wrap;
+}
+
 // ── RENDER TODO LISTS ─────────────────────────────────────────
 function renderList(key){
   const c=document.getElementById('list-'+key); if(!c)return;
@@ -452,6 +511,10 @@ function renderList(key){
         <div class="todo-content"><div class="todo-label ${sc}">${esc(item.label)}</div>
         <div class="checked-info">${item.checkedAt?'✓ '+fmt(item.checkedAt):''}</div></div>`;
       row.addEventListener('click',()=>toggle(key,item.id));
+      // pin widget for p1 and p2
+      if(PIN_IDS.includes(item.id)){
+        row.appendChild(buildPinWidget(item.id));
+      }
     }
     c.appendChild(row);
   });
