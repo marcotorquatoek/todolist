@@ -365,7 +365,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "v5.0";
+const VERSION = "v6.0";
 
 // ── DEFAULT DATA ──────────────────────────────────────────────
 const defaultData = {
@@ -458,6 +458,7 @@ function buildPinWidget(itemId){
     inp.dataset.itemId = itemId;
     inp.dataset.idx = i;
 
+    inp.addEventListener('focus', ()=> inp.select());
     inp.addEventListener('input', e=>{
       // keep only digits, max 2
       inp.value = inp.value.replace(/\D/g,'').slice(0,2);
