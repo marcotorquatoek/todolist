@@ -365,7 +365,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = "v6.0";
+const VERSION = "v7.0";
 
 // ── DEFAULT DATA ──────────────────────────────────────────────
 const defaultData = {
@@ -524,10 +524,37 @@ function renderList(key){
 function renderAll(){ Object.keys(state).forEach(k=>renderList(k)); syncBadges(); }
 function syncBadges(){ document.querySelectorAll('.version-badge').forEach(el=>el.textContent=VERSION); }
 
+// ── SUPABASE KEEPALIVE ────────────────────────────────────────
+const SUPA_PROJECTS = [
+  { url: 'https://zdwzombpaixkcryfpkxg.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpkd3pvbWJwYWl4a2NyeWZwa3hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3MzczMTAsImV4cCI6MjA5NzMxMzMxMH0.ttAPvk-kV_BWC8RH43eVNXsN6HglLIQhp0rieWwjGPw' },
+  { url: 'https://mddqusydtejvapwaftzf.supabase.co', key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZHF1c3lkdGVqdmFwd2FmdHpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTUyNTcsImV4cCI6MjA4OTQ5MTI1N30.W0hg0gnNprjihzYiC9XpEtIjjxeDO6k3IxAgM0ha__0' },
+];
+
+async function supaKeepalive(){
+  const today = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  if(localStorage.getItem('supa-ping-date') === today) return; // già fatto oggi
+  for(const p of SUPA_PROJECTS){
+    try {
+      await fetch(`${p.url}/rest/v1/todo_keepalive?on_conflict=id`, {
+        method: 'POST',
+        headers: {
+          'apikey': p.key,
+          'Authorization': `Bearer ${p.key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates',
+        },
+        body: JSON.stringify({ id: 'ping', last_ping: new Date().toISOString() }),
+      });
+    } catch(e){ /* silenzioso */ }
+  }
+  localStorage.setItem('supa-ping-date', today);
+}
+
 // ── TOGGLE ────────────────────────────────────────────────────
 function toggle(section,id){
   const item=state[section].find(i=>i.id===id); if(!item)return;
   item.checked=!item.checked; item.checkedAt=item.checked?new Date().toISOString():null;
+  if(item.checked) supaKeepalive(); // ping silenzioso al primo check
   save(); renderList(section);
 }
 
